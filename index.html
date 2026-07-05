@@ -72,6 +72,10 @@ input:focus, select:focus{outline:2px solid var(--tinta2); border-color:var(--ti
 .out .line{font-size:14px; margin-top:6px; color:var(--tinta2);}
 .out.warn{background:#fbeee9; border-color:#e6c3b8;}
 .out.warn .big{color:var(--rojo);}
+.check{display:flex; align-items:flex-start; gap:10px; font-family:system-ui,-apple-system,sans-serif; font-size:14px; color:var(--tinta2); padding:9px 0; border-bottom:1px solid #eef2f6; cursor:pointer;}
+.check:last-of-type{border-bottom:0;}
+.check input{width:20px; height:20px; margin:1px 0 0; flex:0 0 auto;}
+.check .pts{margin-left:auto; color:var(--gris); font-size:12px; white-space:nowrap;}
 .hint{font-family:system-ui,-apple-system,sans-serif; font-size:12px; color:var(--gris); margin-top:8px;}
 .foot{font-family:system-ui,-apple-system,sans-serif; font-size:11.5px; color:var(--gris); text-align:center; margin:26px 0 0;}
 a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans-serif; font-size:12px; color:var(--gris); text-decoration:none; margin-top:12px;}
@@ -96,6 +100,8 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a href="#anticonvulsivantes">Anticonvulsivantes</a>
     <a href="#qtc">QTc</a>
     <a href="#cockcroft">Aclaramiento (Cockcroft)</a>
+    <a href="#cha2ds2vasc">CHA₂DS₂-VASc</a>
+    <a href="#wells-tep">Wells (TEP)</a>
   </nav>
 
   <!-- ============ FLUIDOS ============ -->
@@ -252,7 +258,48 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a class="top" href="#">↑ Menú</a>
   </section>
 
-  <p class="foot">Guardia sin Pánico · Calculadoras v0.2 (borrador) · Última revisión: julio 2026</p>
+  <!-- ============ CHA2DS2-VASc ============ -->
+  <section class="card" id="cha2ds2vasc">
+    <h2>CHA₂DS₂-VASc · riesgo embólico en FA</h2>
+    <p class="sub">Marca lo que cumpla. Orienta la indicación de anticoagulación.</p>
+
+    <div id="cha-list">
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Insuficiencia cardíaca / disfunción ventricular</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Hipertensión arterial</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="2"/> <span>Edad ≥ 75 años</span><span class="pts">+2</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Edad 65-74 años</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Diabetes mellitus</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="2"/> <span>Ictus / AIT / embolia previa</span><span class="pts">+2</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Enfermedad vascular (IAM, arteriopatía, placa aórtica)</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Sexo femenino</span><span class="pts">+1</span></label>
+    </div>
+
+    <div class="out" id="cha-out"><div class="big">0 <small>puntos</small></div></div>
+    <p class="hint">Referencia: ESC. Anticoagular si ≥ 2 (varón) o ≥ 3 (mujer); considerar si 1 (varón) o 2 (mujer). Marca solo un rango de edad.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <!-- ============ WELLS TEP ============ -->
+  <section class="card" id="wells-tep">
+    <h2>Wells · probabilidad de TEP</h2>
+    <p class="sub">Probabilidad pretest antes de pedir dímero D o imagen.</p>
+
+    <div id="wells-list">
+      <label class="check"><input type="checkbox" data-p="3"/> <span>Signos clínicos de TVP</span><span class="pts">+3</span></label>
+      <label class="check"><input type="checkbox" data-p="3"/> <span>Diagnóstico alternativo menos probable que TEP</span><span class="pts">+3</span></label>
+      <label class="check"><input type="checkbox" data-p="1.5"/> <span>Frecuencia cardíaca &gt; 100 lpm</span><span class="pts">+1,5</span></label>
+      <label class="check"><input type="checkbox" data-p="1.5"/> <span>Inmovilización o cirugía en las últimas 4 semanas</span><span class="pts">+1,5</span></label>
+      <label class="check"><input type="checkbox" data-p="1.5"/> <span>TEP o TVP previa</span><span class="pts">+1,5</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Hemoptisis</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Cáncer activo</span><span class="pts">+1</span></label>
+    </div>
+
+    <div class="out" id="wells-out"><div class="big">0 <small>puntos</small></div></div>
+    <p class="hint">Referencia: criterios de Wells. Modelo dicotómico: ≤ 4 «TEP improbable» (dímero D); &gt; 4 «TEP probable» (imagen). Tres niveles: &lt; 2 baja, 2-6 intermedia, &gt; 6 alta.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <p class="foot">Guardia sin Pánico · Calculadoras v0.3 (borrador) · Última revisión: julio 2026</p>
 </div>
 
 <script>
@@ -444,8 +491,40 @@ function calcCk(){
 }
 ['ck-edad','ck-peso','ck-cr','ck-sexo'].forEach(function(id){ $(id).addEventListener('input', calcCk); });
 
+/* ================= CHA2DS2-VASc ================= */
+function sumChecks(listId){
+  var total = 0;
+  [].forEach.call($(listId).querySelectorAll('input:checked'), function(c){ total += parseFloat(c.dataset.p); });
+  return total;
+}
+function calcCha(){
+  var p = sumChecks('cha-list'); var out = $('cha-out');
+  var msg;
+  if(p === 0) msg = 'Riesgo bajo. En general, no anticoagular.';
+  else if(p === 1) msg = 'Considerar anticoagulación (obligada si el punto es por sexo femenino aislado: no cuenta como indicación).';
+  else msg = 'Anticoagulación indicada (valora siempre el riesgo de sangrado).';
+  out.className = (p >= 2) ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + p.toLocaleString('es-ES') + ' <small>puntos</small></div><div class="line">' + msg + '</div>';
+}
+$('cha-list').addEventListener('change', calcCha);
+
+/* ================= WELLS TEP ================= */
+function calcWells(){
+  var p = sumChecks('wells-list'); var out = $('wells-out');
+  var dico = (p > 4) ? 'TEP probable → imagen (angio-TC)' : 'TEP improbable → dímero D';
+  var tres;
+  if(p < 2) tres = 'Probabilidad baja';
+  else if(p <= 6) tres = 'Probabilidad intermedia';
+  else tres = 'Probabilidad alta';
+  out.className = (p > 4) ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + p.toLocaleString('es-ES') + ' <small>puntos</small></div>' +
+    '<div class="line">Dicotómico: ' + dico + '</div>' +
+    '<div class="line">Tres niveles: ' + tres + '</div>';
+}
+$('wells-list').addEventListener('change', calcWells);
+
 /* init */
-calcFlu(); calcGas(); calcSal(); calcAdr(); calcAc(); calcQtc(); calcCk();
+calcFlu(); calcGas(); calcSal(); calcAdr(); calcAc(); calcQtc(); calcCk(); calcCha(); calcWells();
 </script>
 </body>
 </html>
