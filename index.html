@@ -107,6 +107,9 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a href="#child-pugh">Child-Pugh</a>
     <a href="#gcs">Glasgow (GCS)</a>
     <a href="#nihss">NIHSS</a>
+    <a href="#sodio-corregido">Sodio corregido</a>
+    <a href="#calcio-corregido">Calcio corregido</a>
+    <a href="#osmolalidad">Osmolalidad</a>
   </nav>
 
   <!-- ============ FLUIDOS ============ -->
@@ -427,7 +430,54 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a class="top" href="#">↑ Menú</a>
   </section>
 
-  <p class="foot">Guardia sin Pánico · Calculadoras v0.5 (borrador) · Última revisión: julio 2026</p>
+  <!-- ============ SODIO CORREGIDO ============ -->
+  <section class="card" id="sodio-corregido">
+    <h2>Sodio corregido por glucemia</h2>
+    <p class="sub">La hiperglucemia baja falsamente el sodio medido.</p>
+
+    <div class="row">
+      <div><label>Sodio medido (mmol/L)</label><input type="number" id="snc-na" inputmode="decimal" placeholder="130"/></div>
+      <div><label>Glucosa (mg/dL)</label><input type="number" id="snc-glu" inputmode="decimal" placeholder="500"/></div>
+    </div>
+
+    <div class="out" id="snc-out"><div class="big">— <small>mmol/L</small></div></div>
+    <p class="hint">Corrección: Na + 1,6 × [(glucosa − 100) / 100]. Algunos usan factor 2,4 con glucemias muy altas (&gt; 400).</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <!-- ============ CALCIO CORREGIDO ============ -->
+  <section class="card" id="calcio-corregido">
+    <h2>Calcio corregido por albúmina</h2>
+    <p class="sub">La hipoalbuminemia enmascara la cifra real de calcio.</p>
+
+    <div class="row">
+      <div><label>Calcio total (mg/dL)</label><input type="number" id="cac-ca" inputmode="decimal" step="0.1" placeholder="10"/></div>
+      <div><label>Albúmina (g/dL)</label><input type="number" id="cac-alb" inputmode="decimal" step="0.1" placeholder="4"/></div>
+    </div>
+
+    <div class="out" id="cac-out"><div class="big">— <small>mg/dL</small></div></div>
+    <p class="hint">Corrección: Ca + 0,8 × (4,0 − albúmina). Ante duda, el calcio iónico es el patrón de referencia.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <!-- ============ OSMOLALIDAD ============ -->
+  <section class="card" id="osmolalidad">
+    <h2>Osmolalidad plasmática</h2>
+    <p class="sub">Total y efectiva (tonicidad). Útil en EHH e hiponatremia.</p>
+
+    <div class="row">
+      <div><label>Sodio (mmol/L)</label><input type="number" id="osm-na" inputmode="decimal" placeholder="140"/></div>
+      <div><label>Glucosa (mg/dL)</label><input type="number" id="osm-glu" inputmode="decimal" placeholder="90"/></div>
+    </div>
+    <label>Urea (mg/dL)</label>
+    <input type="number" id="osm-urea" inputmode="decimal" placeholder="40"/>
+
+    <div class="out" id="osm-out"><div class="big">— <small>mOsm/kg</small></div></div>
+    <p class="hint">Total = 2 × Na + glucosa/18 + urea/6. Efectiva = 2 × Na + glucosa/18 (excluye la urea). Normal ≈ 285-295.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <p class="foot">Guardia sin Pánico · Calculadoras v0.6 (borrador) · Última revisión: julio 2026</p>
 </div>
 
 <script>
@@ -725,9 +775,45 @@ function calcNi(){
 }
 [].forEach.call(document.querySelectorAll('select.nih'), function(s){ s.addEventListener('change', calcNi); });
 
+/* ================= SODIO CORREGIDO ================= */
+function calcSnc(){
+  var na = num('snc-na'), glu = num('snc-glu'); var out = $('snc-out');
+  if(na === null || glu === null){ out.className='out'; out.innerHTML = '<div class="big">— <small>mmol/L</small></div>'; return; }
+  var corr = na + 1.6 * ((glu - 100) / 100);
+  out.className = 'out';
+  out.innerHTML = '<div class="big">' + corr.toFixed(1) + ' <small>mmol/L</small></div>' +
+    '<div class="line">Sodio medido ' + na.toFixed(0) + ' → corregido ' + corr.toFixed(1) + ' por glucemia de ' + glu.toFixed(0) + ' mg/dL.</div>';
+}
+['snc-na','snc-glu'].forEach(function(id){ $(id).addEventListener('input', calcSnc); });
+
+/* ================= CALCIO CORREGIDO ================= */
+function calcCac(){
+  var ca = num('cac-ca'), alb = num('cac-alb'); var out = $('cac-out');
+  if(ca === null || alb === null){ out.className='out'; out.innerHTML = '<div class="big">— <small>mg/dL</small></div>'; return; }
+  var corr = ca + 0.8 * (4.0 - alb);
+  var warn = (corr > 10.5);
+  out.className = warn ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + corr.toFixed(1) + ' <small>mg/dL</small></div>' +
+    '<div class="line">' + (corr > 10.5 ? 'Por encima del rango: hipercalcemia.' : (corr < 8.5 ? 'Por debajo del rango: hipocalcemia.' : 'Dentro del rango habitual.')) + '</div>';
+}
+['cac-ca','cac-alb'].forEach(function(id){ $(id).addEventListener('input', calcCac); });
+
+/* ================= OSMOLALIDAD ================= */
+function calcOsm(){
+  var na = num('osm-na'), glu = num('osm-glu'), urea = num('osm-urea'); var out = $('osm-out');
+  if(na === null || glu === null){ out.className='out'; out.innerHTML = '<div class="big">— <small>mOsm/kg</small></div>'; return; }
+  var efectiva = 2*na + glu/18;
+  var total = efectiva + ((urea !== null) ? urea/6 : 0);
+  var warn = (efectiva > 320);
+  out.className = warn ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + total.toFixed(0) + ' <small>mOsm/kg' + ((urea === null) ? ' (sin urea)' : '') + '</small></div>' +
+    '<div class="line">Efectiva (tonicidad): ' + efectiva.toFixed(0) + ' mOsm/kg' + (efectiva > 320 ? ' → hiperosmolar' : '') + '.</div>';
+}
+['osm-na','osm-glu','osm-urea'].forEach(function(id){ $(id).addEventListener('input', calcOsm); });
+
 /* init */
 calcFlu(); calcGas(); calcSal(); calcAdr(); calcAc(); calcQtc(); calcCk(); calcCha(); calcWells();
-calcGb(); calcBisap(); calcCp(); calcGcs(); calcNi();
+calcGb(); calcBisap(); calcCp(); calcGcs(); calcNi(); calcSnc(); calcCac(); calcOsm();
 </script>
 </body>
 </html>
