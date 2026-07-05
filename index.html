@@ -91,7 +91,11 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
   <nav class="menu">
     <a href="#fluidos">Fluidos (sepsis)</a>
     <a href="#gasometria">Gasometría</a>
-    <a href="#salbutamol">Salbutamol (asma)</a>
+    <a href="#salbutamol">Salbutamol</a>
+    <a href="#adrenalina">Adrenalina</a>
+    <a href="#anticonvulsivantes">Anticonvulsivantes</a>
+    <a href="#qtc">QTc</a>
+    <a href="#cockcroft">Aclaramiento (Cockcroft)</a>
   </nav>
 
   <!-- ============ FLUIDOS ============ -->
@@ -178,16 +182,84 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a class="top" href="#">↑ Menú</a>
   </section>
 
-  <p class="foot">Guardia sin Pánico · Calculadoras v0.1 (borrador) · Última revisión: julio 2026</p>
+  <!-- ============ ADRENALINA ============ -->
+  <section class="card" id="adrenalina">
+    <h2>Adrenalina IM en anafilaxia</h2>
+    <p class="sub">Solución 1:1000 (1 mg/ml). La dosis en mg equivale a los ml a cargar.</p>
+
+    <label>Paciente</label>
+    <div class="seg" id="adr-tipo">
+      <button class="on" data-t="adulto">Adulto</button>
+      <button data-t="ped">Pediátrico</button>
+    </div>
+
+    <div id="adr-ped" style="display:none">
+      <label>Peso (kg)</label>
+      <input type="number" id="adr-peso" inputmode="decimal" placeholder="15" min="3" max="60"/>
+    </div>
+
+    <div class="out" id="adr-out"><div class="big">—</div></div>
+    <p class="hint">Referencia: GALAXIA/EAACI. Vía IM en cara anterolateral del muslo. Repetir cada 5-15 min si no hay mejoría.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <!-- ============ ANTICONVULSIVANTES ============ -->
+  <section class="card" id="anticonvulsivantes">
+    <h2>Anticonvulsivantes por peso · estatus</h2>
+    <p class="sub">Dosis de primera y segunda línea calculadas sobre el peso.</p>
+
+    <label>Peso (kg)</label>
+    <input type="number" id="ac-peso" inputmode="decimal" placeholder="70" min="3" max="150"/>
+
+    <div class="out" id="ac-out"><div class="big" style="font-size:18px;line-height:1.5">—</div></div>
+    <p class="hint">Referencia: guías SEN/ILAE. 1ª línea benzodiacepina; si persiste a los 5-10 min, 2ª línea. Fenitoína con monitorización cardíaca.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <!-- ============ QTc ============ -->
+  <section class="card" id="qtc">
+    <h2>QTc · QT corregido</h2>
+    <p class="sub">Antes de pautar fármacos que alargan el QT (haloperidol, etc.).</p>
+
+    <div class="row">
+      <div><label>QT medido (ms)</label><input type="number" id="qt-qt" inputmode="decimal" placeholder="400"/></div>
+      <div><label>Frec. cardíaca (lpm)</label><input type="number" id="qt-fc" inputmode="decimal" placeholder="75"/></div>
+    </div>
+    <label>Sexo</label>
+    <select id="qt-sexo"><option value="h">Hombre</option><option value="m">Mujer</option></select>
+
+    <div class="out" id="qt-out"><div class="big">— <small>ms</small></div></div>
+    <p class="hint">Bazett y Fridericia. Bazett sobreestima a FC altas; a &gt;100 lpm valora Fridericia. Riesgo si &gt;500 ms o aumento &gt;60 ms sobre el basal.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <!-- ============ COCKCROFT ============ -->
+  <section class="card" id="cockcroft">
+    <h2>Aclaramiento de creatinina · Cockcroft-Gault</h2>
+    <p class="sub">Para ajustar la dosis de fármacos a la función renal.</p>
+
+    <div class="row">
+      <div><label>Edad (años)</label><input type="number" id="ck-edad" inputmode="decimal" placeholder="65"/></div>
+      <div><label>Peso (kg)</label><input type="number" id="ck-peso" inputmode="decimal" placeholder="70"/></div>
+    </div>
+    <div class="row">
+      <div><label>Creatinina (mg/dL)</label><input type="number" id="ck-cr" inputmode="decimal" step="0.01" placeholder="1.0"/></div>
+      <div><label>Sexo</label><select id="ck-sexo"><option value="h">Hombre</option><option value="m">Mujer</option></select></div>
+    </div>
+
+    <div class="out" id="ck-out"><div class="big">— <small>ml/min</small></div></div>
+    <p class="hint">Cockcroft-Gault. Si la creatinina está en µmol/L, divídela entre 88,4. Usa el peso ajustado en obesidad marcada.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <p class="foot">Guardia sin Pánico · Calculadoras v0.2 (borrador) · Última revisión: julio 2026</p>
 </div>
 
 <script>
 "use strict";
 var $ = function(id){ return document.getElementById(id); };
-function num(id){ var v = parseFloat($(id).value.replace(',', '.')); return isNaN(v) ? null : v; }
+function num(id){ var el=$(id); if(!el) return null; var v = parseFloat(el.value.replace(',', '.')); return isNaN(v) ? null : v; }
 function fmt(n){ return n.toLocaleString('es-ES'); }
-
-/* ---- segmented control helper ---- */
 function seg(containerId, cb){
   var box = $(containerId);
   box.addEventListener('click', function(e){
@@ -201,28 +273,23 @@ function seg(containerId, cb){
 /* ================= FLUIDOS ================= */
 var fluModo = 'real', fluDosis = 30;
 function idealBodyWeight(sexo, tallaCm){
-  // Devine: base + 0.9 kg por cm por encima de 152.4
   var base = (sexo === 'h') ? 50 : 45.5;
   var w = base + 0.9 * (tallaCm - 152.4);
-  return Math.max(w, base * 0.6); // suelo de seguridad
+  return Math.max(w, base * 0.6);
 }
 function calcFlu(){
   var peso;
-  if(fluModo === 'real'){
-    peso = num('flu-peso');
-  } else {
-    var t = num('flu-talla'); var sx = $('flu-sexo').value;
-    peso = (t !== null) ? idealBodyWeight(sx, t) : null;
-  }
+  if(fluModo === 'real'){ peso = num('flu-peso'); }
+  else { var t = num('flu-talla'); peso = (t !== null) ? idealBodyWeight($('flu-sexo').value, t) : null; }
   var out = $('flu-out');
   if(peso === null || peso <= 0){ out.innerHTML = '<div class="big">— <small>ml</small></div>'; return; }
   var vol = Math.round(peso * fluDosis);
-  var ritmo3h = Math.round(vol / 3); // ml/h para pasarlo en 3 h
+  var ritmo3h = Math.round(vol / 3);
   var pesoTxt = (fluModo === 'ideal') ? ('Peso ideal ≈ ' + peso.toFixed(1) + ' kg · ') : '';
   out.innerHTML =
     '<div class="big">' + fmt(vol) + ' <small>ml</small></div>' +
     '<div class="line">' + pesoTxt + fluDosis + ' ml/kg</div>' +
-    '<div class="line">≈ ' + fmt(ritmo3h) + ' ml/h si se pasa en 3 h · ≈ ' + fmt(Math.round(vol/1)) + ' ml en bolos de reevaluación</div>';
+    '<div class="line">≈ ' + fmt(ritmo3h) + ' ml/h si se pasa en 3 h</div>';
 }
 seg('flu-modo', function(b){
   fluModo = b.dataset.modo;
@@ -238,18 +305,12 @@ function calcGas(){
   var ph = num('ga-ph'), co2 = num('ga-co2'), hco3 = num('ga-hco3');
   var na = num('ga-na'), cl = num('ga-cl');
   var out = $('ga-out');
-  if(ph === null || co2 === null || hco3 === null){
-    out.className='out'; out.innerHTML = '<div class="big">—</div>'; return;
-  }
-  var lines = [];
-  var titulo, trastorno, warn = false;
-
-  // Trastorno primario
+  if(ph === null || co2 === null || hco3 === null){ out.className='out'; out.innerHTML = '<div class="big">—</div>'; return; }
+  var lines = [], trastorno, warn = false;
   if(ph < 7.35){
     warn = true;
     if(hco3 < 22){
       trastorno = 'Acidosis metabólica';
-      // Winter: pCO2 esperada = 1.5*HCO3 + 8 (±2)
       var esp = 1.5*hco3 + 8;
       if(co2 > esp+2) lines.push('pCO₂ mayor que la esperada (' + esp.toFixed(0) + '±2): acidosis respiratoria añadida.');
       else if(co2 < esp-2) lines.push('pCO₂ menor que la esperada (' + esp.toFixed(0) + '±2): alcalosis respiratoria añadida.');
@@ -260,30 +321,20 @@ function calcGas(){
     }
   } else if(ph > 7.45){
     warn = true;
-    if(hco3 > 26){
-      trastorno = 'Alcalosis metabólica';
-    } else {
-      trastorno = 'Alcalosis respiratoria';
-    }
+    trastorno = (hco3 > 26) ? 'Alcalosis metabólica' : 'Alcalosis respiratoria';
   } else {
     trastorno = 'pH en rango';
     if(co2 > 45 || hco3 > 26) lines.push('pH normal pero pCO₂/HCO₃⁻ alterados: posible trastorno mixto o totalmente compensado.');
     else if(co2 < 35 || hco3 < 22) lines.push('pH normal con pCO₂/HCO₃⁻ bajos: posible trastorno mixto o compensado.');
     else lines.push('Valores dentro de la normalidad.');
   }
-
-  // Anion gap
   if(na !== null && cl !== null){
     var ag = na - (cl + hco3);
     lines.push('Anion gap = ' + ag.toFixed(0) + ' mmol/L ' + (ag>12 ? '→ elevado (AG alto)' : '(normal)') + '.');
-    if(ag > 12 && trastorno === 'Acidosis metabólica'){
-      lines.push('Acidosis metabólica con AG elevado: piensa en lactato, cetoacidosis, tóxicos, uremia.');
-    }
+    if(ag > 12 && trastorno === 'Acidosis metabólica') lines.push('AG elevado: piensa en lactato, cetoacidosis, tóxicos, uremia.');
   }
-
   out.className = warn ? 'out warn' : 'out';
-  out.innerHTML = '<div class="big">' + trastorno + '</div>' +
-    lines.map(function(l){ return '<div class="line">• ' + l + '</div>'; }).join('');
+  out.innerHTML = '<div class="big">' + trastorno + '</div>' + lines.map(function(l){ return '<div class="line">• ' + l + '</div>'; }).join('');
 }
 ['ga-ph','ga-co2','ga-hco3','ga-na','ga-cl'].forEach(function(id){ $(id).addEventListener('input', calcGas); });
 
@@ -299,7 +350,6 @@ function calcSal(){
   }
   var peso = num('sal-peso');
   if(peso === null || peso <= 0){ out.innerHTML = '<div class="big" style="font-size:19px">—</div>'; return; }
-  // Nebulizado 0,15 mg/kg (mín 2,5 · máx 5). MDI: ~1 puff por cada 2-3 kg, máx ~10.
   var neb = Math.min(Math.max(peso*0.15, 2.5), 5);
   var puffs = Math.min(Math.max(Math.round(peso/2.5), 2), 10);
   out.innerHTML = '<div class="big" style="font-size:22px">Nebulizado: ' + neb.toFixed(1) + ' mg</div>' +
@@ -307,15 +357,95 @@ function calcSal(){
     '<div class="line">o MDI + cámara: ≈ ' + puffs + ' pulsaciones (100 µg c/u)</div>' +
     '<div class="line">Repetir cada 20 min la primera hora según respuesta.</div>';
 }
-seg('sal-tipo', function(b){
-  salTipo = b.dataset.t;
-  $('sal-ped').style.display = (salTipo==='ped') ? 'block':'none';
-  calcSal();
-});
+seg('sal-tipo', function(b){ salTipo = b.dataset.t; $('sal-ped').style.display = (salTipo==='ped')?'block':'none'; calcSal(); });
 $('sal-peso').addEventListener('input', calcSal);
 
+/* ================= ADRENALINA ================= */
+var adrTipo = 'adulto';
+function calcAdr(){
+  var out = $('adr-out');
+  if(adrTipo === 'adulto'){
+    out.innerHTML = '<div class="big">0,5 mg <small>IM</small></div>' +
+      '<div class="line">= 0,5 ml de la solución 1:1000</div>' +
+      '<div class="line">Repetir cada 5-15 min si no mejora.</div>';
+    return;
+  }
+  var peso = num('adr-peso');
+  if(peso === null || peso <= 0){ out.innerHTML = '<div class="big">—</div>'; return; }
+  var dosis = Math.min(peso*0.01, 0.5);
+  out.innerHTML = '<div class="big">' + dosis.toFixed(2) + ' mg <small>IM</small></div>' +
+    '<div class="line">0,01 mg/kg (máx 0,5 mg) = ' + dosis.toFixed(2) + ' ml de 1:1000</div>' +
+    '<div class="line">Repetir cada 5-15 min si no mejora.</div>';
+}
+seg('adr-tipo', function(b){ adrTipo = b.dataset.t; $('adr-ped').style.display = (adrTipo==='ped')?'block':'none'; calcAdr(); });
+$('adr-peso').addEventListener('input', calcAdr);
+
+/* ================= ANTICONVULSIVANTES ================= */
+function dosisTxt(nombre, mgkg, peso, max, extra){
+  var d = mgkg * peso; var cap = (d > max);
+  var val = Math.min(d, max);
+  var g = (val >= 1000) ? (' (' + (val/1000).toFixed(val%1000===0?0:1) + ' g)') : '';
+  return '<div class="line"><strong>' + nombre + ':</strong> ' + Math.round(val) + ' mg' + g +
+    ' <span style="color:#8a97a5">(' + mgkg + ' mg/kg' + (cap ? ', tope ' + (max>=1000?(max/1000)+' g':max+' mg') : '') + ')</span>' +
+    (extra ? ' ' + extra : '') + '</div>';
+}
+function calcAc(){
+  var peso = num('ac-peso'); var out = $('ac-out');
+  if(peso === null || peso <= 0){ out.innerHTML = '<div class="big" style="font-size:18px;line-height:1.5">—</div>'; return; }
+  var html = '<div class="line" style="color:#1c3a56;font-weight:600;margin-bottom:2px">1ª línea · benzodiacepina</div>';
+  html += dosisTxt('Midazolam IM', 0.2, peso, 10);
+  html += dosisTxt('Diazepam IV', 0.15, peso, 10);
+  html += dosisTxt('Lorazepam IV', 0.1, peso, 4);
+  html += '<div class="line" style="color:#1c3a56;font-weight:600;margin:8px 0 2px">2ª línea (20-40 min)</div>';
+  html += dosisTxt('Levetiracetam IV', 60, peso, 4500);
+  html += dosisTxt('Valproato IV', 40, peso, 3000);
+  html += dosisTxt('Fenitoína IV', 20, peso, 1500, '<span style="color:#8a2b2b">(monitor. cardíaca)</span>');
+  out.innerHTML = html;
+}
+$('ac-peso').addEventListener('input', calcAc);
+
+/* ================= QTc ================= */
+function calcQtc(){
+  var qt = num('qt-qt'), fc = num('qt-fc'); var out = $('qt-out');
+  if(qt === null || fc === null || fc <= 0){ out.className='out'; out.innerHTML = '<div class="big">— <small>ms</small></div>'; return; }
+  var rr = 60 / fc;
+  var bazett = qt / Math.sqrt(rr);
+  var frid = qt / Math.cbrt(rr);
+  var sexo = $('qt-sexo').value;
+  var umbral = (sexo === 'h') ? 450 : 470;
+  var warn = (bazett > 500);
+  var estado;
+  if(bazett > 500) estado = 'Muy prolongado (riesgo de torsade)';
+  else if(bazett > umbral) estado = 'Prolongado';
+  else estado = 'Normal';
+  out.className = warn ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + Math.round(bazett) + ' <small>ms (Bazett)</small></div>' +
+    '<div class="line">' + estado + ' · umbral ' + umbral + ' ms (' + (sexo==='h'?'varón':'mujer') + ')</div>' +
+    '<div class="line">Fridericia: ' + Math.round(frid) + ' ms' + (fc>100?' (preferible a esta FC)':'') + '</div>';
+}
+['qt-qt','qt-fc','qt-sexo'].forEach(function(id){ $(id).addEventListener('input', calcQtc); });
+
+/* ================= COCKCROFT-GAULT ================= */
+function calcCk(){
+  var edad = num('ck-edad'), peso = num('ck-peso'), cr = num('ck-cr'); var out = $('ck-out');
+  if(edad === null || peso === null || cr === null || cr <= 0){ out.className='out'; out.innerHTML = '<div class="big">— <small>ml/min</small></div>'; return; }
+  var factor = ($('ck-sexo').value === 'm') ? 0.85 : 1;
+  var crcl = ((140 - edad) * peso * factor) / (72 * cr);
+  var etapa;
+  if(crcl >= 90) etapa = 'Función normal';
+  else if(crcl >= 60) etapa = 'Leve descenso';
+  else if(crcl >= 30) etapa = 'Moderado — revisa ajustes de dosis';
+  else if(crcl >= 15) etapa = 'Grave — ajuste obligado';
+  else etapa = 'Fallo renal — muchos fármacos contraindicados';
+  var warn = (crcl < 30);
+  out.className = warn ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + crcl.toFixed(0) + ' <small>ml/min</small></div>' +
+    '<div class="line">' + etapa + '</div>';
+}
+['ck-edad','ck-peso','ck-cr','ck-sexo'].forEach(function(id){ $(id).addEventListener('input', calcCk); });
+
 /* init */
-calcFlu(); calcGas(); calcSal();
+calcFlu(); calcGas(); calcSal(); calcAdr(); calcAc(); calcQtc(); calcCk();
 </script>
 </body>
 </html>
