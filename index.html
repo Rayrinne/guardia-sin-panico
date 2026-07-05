@@ -105,6 +105,8 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a href="#glasgow-blatchford">Glasgow-Blatchford</a>
     <a href="#bisap">BISAP</a>
     <a href="#child-pugh">Child-Pugh</a>
+    <a href="#gcs">Glasgow (GCS)</a>
+    <a href="#nihss">NIHSS</a>
   </nav>
 
   <!-- ============ FLUIDOS ============ -->
@@ -367,7 +369,65 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a class="top" href="#">↑ Menú</a>
   </section>
 
-  <p class="foot">Guardia sin Pánico · Calculadoras v0.4 (borrador) · Última revisión: julio 2026</p>
+  <!-- ============ GLASGOW COMA SCALE ============ -->
+  <section class="card" id="gcs">
+    <h2>Escala de Glasgow (GCS)</h2>
+    <p class="sub">Nivel de conciencia. ≤ 8 sugiere proteger la vía aérea.</p>
+
+    <label>Apertura ocular</label>
+    <select class="gcs" id="gcs-e"><option value="4">Espontánea (4)</option><option value="3">A la voz (3)</option><option value="2">Al dolor (2)</option><option value="1">Ninguna (1)</option></select>
+    <label>Respuesta verbal</label>
+    <select class="gcs" id="gcs-v"><option value="5">Orientada (5)</option><option value="4">Confusa (4)</option><option value="3">Palabras inapropiadas (3)</option><option value="2">Sonidos incomprensibles (2)</option><option value="1">Ninguna (1)</option></select>
+    <label>Respuesta motora</label>
+    <select class="gcs" id="gcs-m"><option value="6">Obedece órdenes (6)</option><option value="5">Localiza el dolor (5)</option><option value="4">Retirada al dolor (4)</option><option value="3">Flexión anormal (3)</option><option value="2">Extensión (2)</option><option value="1">Ninguna (1)</option></select>
+
+    <div class="out" id="gcs-out"><div class="big">15 <small>/ 15</small></div></div>
+    <p class="hint">Referencia: Teasdale. 13-15 leve · 9-12 moderado · ≤ 8 grave (coma). Anota el desglose (p. ej. E3 V4 M5).</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <!-- ============ NIHSS ============ -->
+  <section class="card" id="nihss">
+    <h2>NIHSS · gravedad del ictus</h2>
+    <p class="sub">Escala del código ictus. Selecciona cada ítem.</p>
+
+    <label>1a. Nivel de consciencia</label>
+    <select class="nih" id="ni-1a"><option value="0">Alerta (0)</option><option value="1">Somnoliento (1)</option><option value="2">Estuporoso (2)</option><option value="3">Coma (3)</option></select>
+    <label>1b. Preguntas (mes y edad)</label>
+    <select class="nih" id="ni-1b"><option value="0">Ambas correctas (0)</option><option value="1">Una correcta (1)</option><option value="2">Ninguna (2)</option></select>
+    <label>1c. Órdenes (ojos y mano)</label>
+    <select class="nih" id="ni-1c"><option value="0">Ambas (0)</option><option value="1">Una (1)</option><option value="2">Ninguna (2)</option></select>
+    <label>2. Mirada conjugada</label>
+    <select class="nih" id="ni-2"><option value="0">Normal (0)</option><option value="1">Paresia parcial (1)</option><option value="2">Desviación forzada (2)</option></select>
+    <label>3. Campos visuales</label>
+    <select class="nih" id="ni-3"><option value="0">Normal (0)</option><option value="1">Hemianopsia parcial (1)</option><option value="2">Hemianopsia completa (2)</option><option value="3">Ceguera bilateral (3)</option></select>
+    <label>4. Paresia facial</label>
+    <select class="nih" id="ni-4"><option value="0">Normal (0)</option><option value="1">Menor (1)</option><option value="2">Parcial (2)</option><option value="3">Completa (3)</option></select>
+    <label>5a. Motor · brazo izquierdo</label>
+    <select class="nih" id="ni-5a"><option value="0">Sin claudicación (0)</option><option value="1">Claudica (1)</option><option value="2">Algún esfuerzo contra gravedad (2)</option><option value="3">Sin vencer gravedad (3)</option><option value="4">Sin movimiento (4)</option></select>
+    <label>5b. Motor · brazo derecho</label>
+    <select class="nih" id="ni-5b"><option value="0">Sin claudicación (0)</option><option value="1">Claudica (1)</option><option value="2">Algún esfuerzo contra gravedad (2)</option><option value="3">Sin vencer gravedad (3)</option><option value="4">Sin movimiento (4)</option></select>
+    <label>6a. Motor · pierna izquierda</label>
+    <select class="nih" id="ni-6a"><option value="0">Sin claudicación (0)</option><option value="1">Claudica (1)</option><option value="2">Algún esfuerzo contra gravedad (2)</option><option value="3">Sin vencer gravedad (3)</option><option value="4">Sin movimiento (4)</option></select>
+    <label>6b. Motor · pierna derecha</label>
+    <select class="nih" id="ni-6b"><option value="0">Sin claudicación (0)</option><option value="1">Claudica (1)</option><option value="2">Algún esfuerzo contra gravedad (2)</option><option value="3">Sin vencer gravedad (3)</option><option value="4">Sin movimiento (4)</option></select>
+    <label>7. Ataxia de miembros</label>
+    <select class="nih" id="ni-7"><option value="0">Ausente (0)</option><option value="1">En un miembro (1)</option><option value="2">En dos miembros (2)</option></select>
+    <label>8. Sensibilidad</label>
+    <select class="nih" id="ni-8"><option value="0">Normal (0)</option><option value="1">Hipoestesia leve-moderada (1)</option><option value="2">Anestesia grave (2)</option></select>
+    <label>9. Lenguaje</label>
+    <select class="nih" id="ni-9"><option value="0">Normal (0)</option><option value="1">Afasia leve-moderada (1)</option><option value="2">Afasia grave (2)</option><option value="3">Mutismo/afasia global (3)</option></select>
+    <label>10. Disartria</label>
+    <select class="nih" id="ni-10"><option value="0">Normal (0)</option><option value="1">Leve-moderada (1)</option><option value="2">Grave/anartria (2)</option></select>
+    <label>11. Extinción / inatención</label>
+    <select class="nih" id="ni-11"><option value="0">Normal (0)</option><option value="1">Inatención en una modalidad (1)</option><option value="2">Inatención grave/hemi-inatención (2)</option></select>
+
+    <div class="out" id="ni-out"><div class="big">0 <small>puntos</small></div></div>
+    <p class="hint">Referencia: NIH Stroke Scale. Orientación: 1-4 leve · 5-15 moderado · 16-20 moderado-grave · 21-42 grave.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <p class="foot">Guardia sin Pánico · Calculadoras v0.5 (borrador) · Última revisión: julio 2026</p>
 </div>
 
 <script>
@@ -635,9 +695,39 @@ function calcCp(){
 }
 [].forEach.call(document.querySelectorAll('select.cp'), function(s){ s.addEventListener('change', calcCp); });
 
+/* ================= GLASGOW COMA SCALE ================= */
+function calcGcs(){
+  var e = parseInt($('gcs-e').value,10), v = parseInt($('gcs-v').value,10), m = parseInt($('gcs-m').value,10);
+  var t = e + v + m;
+  var msg;
+  if(t >= 13) msg = 'Leve.';
+  else if(t >= 9) msg = 'Moderado.';
+  else msg = 'Grave (coma): valorar vía aérea.';
+  var out = $('gcs-out');
+  out.className = (t <= 8) ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + t + ' <small>/ 15 · E' + e + ' V' + v + ' M' + m + '</small></div><div class="line">' + msg + '</div>';
+}
+[].forEach.call(document.querySelectorAll('select.gcs'), function(s){ s.addEventListener('change', calcGcs); });
+
+/* ================= NIHSS ================= */
+function calcNi(){
+  var t = 0;
+  [].forEach.call(document.querySelectorAll('select.nih'), function(s){ t += parseInt(s.value,10); });
+  var msg;
+  if(t === 0) msg = 'Sin déficit medible.';
+  else if(t <= 4) msg = 'Ictus leve.';
+  else if(t <= 15) msg = 'Ictus moderado.';
+  else if(t <= 20) msg = 'Ictus moderado-grave.';
+  else msg = 'Ictus grave.';
+  var out = $('ni-out');
+  out.className = (t >= 16) ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + t + ' <small>puntos</small></div><div class="line">' + msg + '</div>';
+}
+[].forEach.call(document.querySelectorAll('select.nih'), function(s){ s.addEventListener('change', calcNi); });
+
 /* init */
 calcFlu(); calcGas(); calcSal(); calcAdr(); calcAc(); calcQtc(); calcCk(); calcCha(); calcWells();
-calcGb(); calcBisap(); calcCp();
+calcGb(); calcBisap(); calcCp(); calcGcs(); calcNi();
 </script>
 </body>
 </html>
