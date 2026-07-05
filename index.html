@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#1c3a56"/>
+<title>Calculadoras · Guardia sin Pánico</title>
+<style>
+:root{
+  --tinta:#1c3a56; --tinta2:#2f5578; --gris:#8a97a5; --linea:#cdd6df;
+  --rojo:#8a2b2b; --ambar:#9a5a15; --fondo:#f7f5f1; --papel:#ffffff;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{
+  margin:0; background:var(--fondo); color:var(--tinta);
+  font-family:Georgia,'Times New Roman',serif; line-height:1.5;
+  padding:0 0 60px;
+}
+header{
+  background:var(--tinta); color:#fff; padding:16px 18px 14px;
+  position:sticky; top:0; z-index:5;
+}
+header .kicker{font-size:11px; letter-spacing:3px; text-transform:uppercase; color:#aebccb; margin:0;}
+header h1{font-size:19px; margin:2px 0 0; font-weight:normal; letter-spacing:.5px;}
+.wrap{max-width:640px; margin:0 auto; padding:0 16px;}
+.disclaimer{
+  background:#fdf6ec; border:1px solid #e6d3b3; color:#7a5a20;
+  font-size:12.5px; line-height:1.45; padding:10px 12px; border-radius:6px;
+  margin:16px 0; font-family:system-ui,-apple-system,sans-serif;
+}
+nav.menu{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px;}
+nav.menu a{
+  font-family:system-ui,-apple-system,sans-serif; font-size:13px;
+  text-decoration:none; color:var(--tinta); background:var(--papel);
+  border:1px solid var(--linea); border-radius:999px; padding:7px 13px;
+}
+nav.menu a:active{background:#eef2f6;}
+.card{
+  background:var(--papel); border:1px solid var(--linea); border-radius:10px;
+  padding:18px 16px 20px; margin:18px 0; scroll-margin-top:70px;
+}
+.card h2{
+  font-size:12px; letter-spacing:2.5px; text-transform:uppercase;
+  font-weight:normal; color:var(--tinta); border-bottom:1px solid var(--linea);
+  padding-bottom:6px; margin:0 0 4px;
+}
+.card .sub{font-size:13px; color:var(--gris); font-style:italic; margin:0 0 14px;}
+label{
+  display:block; font-family:system-ui,-apple-system,sans-serif;
+  font-size:13px; color:var(--tinta2); margin:12px 0 4px;
+}
+.row{display:flex; gap:10px;}
+.row>div{flex:1;}
+input[type=number], select{
+  width:100%; font-size:17px; font-family:system-ui,-apple-system,sans-serif;
+  padding:11px 12px; border:1px solid var(--linea); border-radius:8px;
+  background:#fff; color:var(--tinta);
+}
+input:focus, select:focus{outline:2px solid var(--tinta2); border-color:var(--tinta2);}
+.seg{display:flex; border:1px solid var(--linea); border-radius:8px; overflow:hidden;}
+.seg button{
+  flex:1; font-family:system-ui,-apple-system,sans-serif; font-size:14px;
+  padding:10px; border:0; background:#fff; color:var(--tinta2); cursor:pointer;
+}
+.seg button.on{background:var(--tinta); color:#fff;}
+.out{
+  margin-top:16px; padding:14px; border-radius:8px; background:#f0f4f8;
+  border:1px solid #dbe4ec; font-family:system-ui,-apple-system,sans-serif;
+}
+.out .big{font-size:26px; font-weight:600; color:var(--tinta); letter-spacing:.3px;}
+.out .big small{font-size:15px; font-weight:400; color:var(--gris);}
+.out .line{font-size:14px; margin-top:6px; color:var(--tinta2);}
+.out.warn{background:#fbeee9; border-color:#e6c3b8;}
+.out.warn .big{color:var(--rojo);}
+.hint{font-family:system-ui,-apple-system,sans-serif; font-size:12px; color:var(--gris); margin-top:8px;}
+.foot{font-family:system-ui,-apple-system,sans-serif; font-size:11.5px; color:var(--gris); text-align:center; margin:26px 0 0;}
+a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans-serif; font-size:12px; color:var(--gris); text-decoration:none; margin-top:12px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <p class="kicker">Guardia sin Pánico</p>
+    <h1>Calculadoras de guardia</h1>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="disclaimer"><strong>Apoyo a la decisión, no la sustituye.</strong> Verifica siempre las dosis y la interpretación con la guía vigente y tu juicio clínico. Herramienta de consulta; no es un producto sanitario ni reemplaza la valoración médica.</p>
+
+  <nav class="menu">
+    <a href="#fluidos">Fluidos (sepsis)</a>
+    <a href="#gasometria">Gasometría</a>
+    <a href="#salbutamol">Salbutamol (asma)</a>
+  </nav>
+
+  <!-- ============ FLUIDOS ============ -->
+  <section class="card" id="fluidos">
+    <h2>Fluidos en sepsis</h2>
+    <p class="sub">Cristaloides 30 ml/kg. Calcula el volumen exacto para no infrarresucitar.</p>
+
+    <label>¿Qué peso usar?</label>
+    <div class="seg" id="flu-modo">
+      <button class="on" data-modo="real">Peso real</button>
+      <button data-modo="ideal">Calcular peso ideal</button>
+    </div>
+
+    <div id="flu-real">
+      <label>Peso (kg)</label>
+      <input type="number" id="flu-peso" inputmode="decimal" placeholder="70" min="1" max="300"/>
+    </div>
+
+    <div id="flu-ideal" style="display:none">
+      <div class="row">
+        <div>
+          <label>Sexo</label>
+          <select id="flu-sexo"><option value="h">Hombre</option><option value="m">Mujer</option></select>
+        </div>
+        <div>
+          <label>Talla (cm)</label>
+          <input type="number" id="flu-talla" inputmode="decimal" placeholder="170" min="120" max="220"/>
+        </div>
+      </div>
+      <p class="hint">Peso ideal (fórmula de Devine). Útil en obesidad para no sobredosificar el volumen.</p>
+    </div>
+
+    <label>Dosis</label>
+    <div class="seg" id="flu-dosis">
+      <button class="on" data-d="30">30 ml/kg</button>
+      <button data-d="20">20 ml/kg</button>
+    </div>
+
+    <div class="out" id="flu-out"><div class="big">— <small>ml</small></div></div>
+    <p class="hint">Referencia: Surviving Sepsis Campaign. Reevalúa la respuesta; no lo administres a ciegas en cardiópata o ERC avanzada.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <!-- ============ GASOMETRÍA ============ -->
+  <section class="card" id="gasometria">
+    <h2>Gasometría · equilibrio ácido-base</h2>
+    <p class="sub">Introduce los tres valores básicos. Iones opcionales para el anion gap.</p>
+
+    <div class="row">
+      <div><label>pH</label><input type="number" id="ga-ph" inputmode="decimal" step="0.01" placeholder="7.40"/></div>
+      <div><label>pCO₂ (mmHg)</label><input type="number" id="ga-co2" inputmode="decimal" placeholder="40"/></div>
+    </div>
+    <label>HCO₃⁻ (mmol/L)</label>
+    <input type="number" id="ga-hco3" inputmode="decimal" placeholder="24"/>
+
+    <div class="row">
+      <div><label>Na⁺ <small style="color:var(--gris)">(opc.)</small></label><input type="number" id="ga-na" inputmode="decimal" placeholder="140"/></div>
+      <div><label>Cl⁻ <small style="color:var(--gris)">(opc.)</small></label><input type="number" id="ga-cl" inputmode="decimal" placeholder="104"/></div>
+    </div>
+
+    <div class="out" id="ga-out"><div class="big">—</div></div>
+    <p class="hint">Interpretación orientativa (compensación esperada, fórmula de Winter, anion gap). Contrástala con la clínica.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <!-- ============ SALBUTAMOL ============ -->
+  <section class="card" id="salbutamol">
+    <h2>Salbutamol en crisis asmática</h2>
+    <p class="sub">Dosis del broncodilatador según edad/peso.</p>
+
+    <label>Paciente</label>
+    <div class="seg" id="sal-tipo">
+      <button class="on" data-t="adulto">Adulto</button>
+      <button data-t="ped">Pediátrico</button>
+    </div>
+
+    <div id="sal-ped" style="display:none">
+      <label>Peso (kg)</label>
+      <input type="number" id="sal-peso" inputmode="decimal" placeholder="20" min="3" max="60"/>
+    </div>
+
+    <div class="out" id="sal-out"><div class="big" style="font-size:19px;line-height:1.4">—</div></div>
+    <p class="hint">Referencia: GEMA/GINA. En crisis grave, tandas repetidas o nebulización continua bajo monitorización; asocia bromuro de ipratropio y corticoide sistémico precoz.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <p class="foot">Guardia sin Pánico · Calculadoras v0.1 (borrador) · Última revisión: julio 2026</p>
+</div>
+
+<script>
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+function num(id){ var v = parseFloat($(id).value.replace(',', '.')); return isNaN(v) ? null : v; }
+function fmt(n){ return n.toLocaleString('es-ES'); }
+
+/* ---- segmented control helper ---- */
+function seg(containerId, cb){
+  var box = $(containerId);
+  box.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    [].forEach.call(box.children, function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    cb(b);
+  });
+}
+
+/* ================= FLUIDOS ================= */
+var fluModo = 'real', fluDosis = 30;
+function idealBodyWeight(sexo, tallaCm){
+  // Devine: base + 0.9 kg por cm por encima de 152.4
+  var base = (sexo === 'h') ? 50 : 45.5;
+  var w = base + 0.9 * (tallaCm - 152.4);
+  return Math.max(w, base * 0.6); // suelo de seguridad
+}
+function calcFlu(){
+  var peso;
+  if(fluModo === 'real'){
+    peso = num('flu-peso');
+  } else {
+    var t = num('flu-talla'); var sx = $('flu-sexo').value;
+    peso = (t !== null) ? idealBodyWeight(sx, t) : null;
+  }
+  var out = $('flu-out');
+  if(peso === null || peso <= 0){ out.innerHTML = '<div class="big">— <small>ml</small></div>'; return; }
+  var vol = Math.round(peso * fluDosis);
+  var ritmo3h = Math.round(vol / 3); // ml/h para pasarlo en 3 h
+  var pesoTxt = (fluModo === 'ideal') ? ('Peso ideal ≈ ' + peso.toFixed(1) + ' kg · ') : '';
+  out.innerHTML =
+    '<div class="big">' + fmt(vol) + ' <small>ml</small></div>' +
+    '<div class="line">' + pesoTxt + fluDosis + ' ml/kg</div>' +
+    '<div class="line">≈ ' + fmt(ritmo3h) + ' ml/h si se pasa en 3 h · ≈ ' + fmt(Math.round(vol/1)) + ' ml en bolos de reevaluación</div>';
+}
+seg('flu-modo', function(b){
+  fluModo = b.dataset.modo;
+  $('flu-real').style.display  = (fluModo==='real') ? 'block':'none';
+  $('flu-ideal').style.display = (fluModo==='ideal')? 'block':'none';
+  calcFlu();
+});
+seg('flu-dosis', function(b){ fluDosis = parseInt(b.dataset.d,10); calcFlu(); });
+['flu-peso','flu-talla','flu-sexo'].forEach(function(id){ $(id).addEventListener('input', calcFlu); });
+
+/* ================= GASOMETRÍA ================= */
+function calcGas(){
+  var ph = num('ga-ph'), co2 = num('ga-co2'), hco3 = num('ga-hco3');
+  var na = num('ga-na'), cl = num('ga-cl');
+  var out = $('ga-out');
+  if(ph === null || co2 === null || hco3 === null){
+    out.className='out'; out.innerHTML = '<div class="big">—</div>'; return;
+  }
+  var lines = [];
+  var titulo, trastorno, warn = false;
+
+  // Trastorno primario
+  if(ph < 7.35){
+    warn = true;
+    if(hco3 < 22){
+      trastorno = 'Acidosis metabólica';
+      // Winter: pCO2 esperada = 1.5*HCO3 + 8 (±2)
+      var esp = 1.5*hco3 + 8;
+      if(co2 > esp+2) lines.push('pCO₂ mayor que la esperada (' + esp.toFixed(0) + '±2): acidosis respiratoria añadida.');
+      else if(co2 < esp-2) lines.push('pCO₂ menor que la esperada (' + esp.toFixed(0) + '±2): alcalosis respiratoria añadida.');
+      else lines.push('Compensación respiratoria adecuada (Winter: pCO₂ ≈ ' + esp.toFixed(0) + '±2).');
+    } else {
+      trastorno = 'Acidosis respiratoria';
+      lines.push('HCO₃⁻ ' + (hco3>26?'elevado (compensación / componente metabólico)':'normal (probablemente aguda)') + '.');
+    }
+  } else if(ph > 7.45){
+    warn = true;
+    if(hco3 > 26){
+      trastorno = 'Alcalosis metabólica';
+    } else {
+      trastorno = 'Alcalosis respiratoria';
+    }
+  } else {
+    trastorno = 'pH en rango';
+    if(co2 > 45 || hco3 > 26) lines.push('pH normal pero pCO₂/HCO₃⁻ alterados: posible trastorno mixto o totalmente compensado.');
+    else if(co2 < 35 || hco3 < 22) lines.push('pH normal con pCO₂/HCO₃⁻ bajos: posible trastorno mixto o compensado.');
+    else lines.push('Valores dentro de la normalidad.');
+  }
+
+  // Anion gap
+  if(na !== null && cl !== null){
+    var ag = na - (cl + hco3);
+    lines.push('Anion gap = ' + ag.toFixed(0) + ' mmol/L ' + (ag>12 ? '→ elevado (AG alto)' : '(normal)') + '.');
+    if(ag > 12 && trastorno === 'Acidosis metabólica'){
+      lines.push('Acidosis metabólica con AG elevado: piensa en lactato, cetoacidosis, tóxicos, uremia.');
+    }
+  }
+
+  out.className = warn ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + trastorno + '</div>' +
+    lines.map(function(l){ return '<div class="line">• ' + l + '</div>'; }).join('');
+}
+['ga-ph','ga-co2','ga-hco3','ga-na','ga-cl'].forEach(function(id){ $(id).addEventListener('input', calcGas); });
+
+/* ================= SALBUTAMOL ================= */
+var salTipo = 'adulto';
+function calcSal(){
+  var out = $('sal-out');
+  if(salTipo === 'adulto'){
+    out.innerHTML = '<div class="big" style="font-size:19px;line-height:1.4">Nebulizado: 2,5–5 mg</div>' +
+      '<div class="line">o inhalador (MDI + cámara): 4–10 pulsaciones de 100 µg</div>' +
+      '<div class="line">Repetir cada 20 min la primera hora según respuesta.</div>';
+    return;
+  }
+  var peso = num('sal-peso');
+  if(peso === null || peso <= 0){ out.innerHTML = '<div class="big" style="font-size:19px">—</div>'; return; }
+  // Nebulizado 0,15 mg/kg (mín 2,5 · máx 5). MDI: ~1 puff por cada 2-3 kg, máx ~10.
+  var neb = Math.min(Math.max(peso*0.15, 2.5), 5);
+  var puffs = Math.min(Math.max(Math.round(peso/2.5), 2), 10);
+  out.innerHTML = '<div class="big" style="font-size:22px">Nebulizado: ' + neb.toFixed(1) + ' mg</div>' +
+    '<div class="line">0,15 mg/kg (mín 2,5 · máx 5 mg)</div>' +
+    '<div class="line">o MDI + cámara: ≈ ' + puffs + ' pulsaciones (100 µg c/u)</div>' +
+    '<div class="line">Repetir cada 20 min la primera hora según respuesta.</div>';
+}
+seg('sal-tipo', function(b){
+  salTipo = b.dataset.t;
+  $('sal-ped').style.display = (salTipo==='ped') ? 'block':'none';
+  calcSal();
+});
+$('sal-peso').addEventListener('input', calcSal);
+
+/* init */
+calcFlu(); calcGas(); calcSal();
+</script>
+</body>
+</html>
