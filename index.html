@@ -111,6 +111,7 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a href="#calcio-corregido">Calcio corregido</a>
     <a href="#osmolalidad">Osmolalidad</a>
     <a href="#curb65">CURB-65</a>
+    <a href="#fena">FENa</a>
   </nav>
 
   <!-- ============ FLUIDOS ============ -->
@@ -496,7 +497,26 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a class="top" href="#">↑ Menú</a>
   </section>
 
-  <p class="foot">Guardia sin Pánico · Calculadoras v0.7 (borrador) · Última revisión: julio 2026</p>
+  <!-- ============ FENa ============ -->
+  <section class="card" id="fena">
+    <h2>FENa · fracción de excreción de sodio</h2>
+    <p class="sub">Distingue el fracaso renal prerrenal del renal (NTA).</p>
+
+    <div class="row">
+      <div><label>Sodio en orina (mmol/L)</label><input type="number" id="fe-una" inputmode="decimal" placeholder="20"/></div>
+      <div><label>Sodio plasmático (mmol/L)</label><input type="number" id="fe-pna" inputmode="decimal" placeholder="140"/></div>
+    </div>
+    <div class="row">
+      <div><label>Creatinina en orina (mg/dL)</label><input type="number" id="fe-ucr" inputmode="decimal" placeholder="100"/></div>
+      <div><label>Creatinina plasmática (mg/dL)</label><input type="number" id="fe-pcr" inputmode="decimal" step="0.01" placeholder="2"/></div>
+    </div>
+
+    <div class="out" id="fe-out"><div class="big">— <small>%</small></div></div>
+    <p class="hint">FENa = (Na orina × Cr plasma) / (Na plasma × Cr orina) × 100. &lt; 1% sugiere prerrenal; &gt; 2% sugiere renal (NTA). Poco fiable con diuréticos o en ERC.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <p class="foot">Guardia sin Pánico · Calculadoras v0.8 (borrador) · Última revisión: julio 2026</p>
 </div>
 
 <script>
@@ -842,9 +862,23 @@ function calcCurb(){
 }
 $('curb-list').addEventListener('change', calcCurb);
 
+/* ================= FENa ================= */
+function calcFena(){
+  var una = num('fe-una'), pna = num('fe-pna'), ucr = num('fe-ucr'), pcr = num('fe-pcr'); var out = $('fe-out');
+  if(una === null || pna === null || ucr === null || pcr === null || pna <= 0 || ucr <= 0){ out.className='out'; out.innerHTML = '<div class="big">— <small>%</small></div>'; return; }
+  var fena = (una * pcr) / (pna * ucr) * 100;
+  var msg;
+  if(fena < 1) msg = 'Sugiere fracaso prerrenal.';
+  else if(fena > 2) msg = 'Sugiere fracaso renal (NTA).';
+  else msg = 'Zona intermedia: interpreta con la clínica.';
+  out.className = 'out';
+  out.innerHTML = '<div class="big">' + fena.toFixed(1) + ' <small>%</small></div><div class="line">' + msg + '</div>';
+}
+['fe-una','fe-pna','fe-ucr','fe-pcr'].forEach(function(id){ $(id).addEventListener('input', calcFena); });
+
 /* init */
 calcFlu(); calcGas(); calcSal(); calcAdr(); calcAc(); calcQtc(); calcCk(); calcCha(); calcWells();
-calcGb(); calcBisap(); calcCp(); calcGcs(); calcNi(); calcSnc(); calcCac(); calcOsm(); calcCurb();
+calcGb(); calcBisap(); calcCp(); calcGcs(); calcNi(); calcSnc(); calcCac(); calcOsm(); calcCurb(); calcFena();
 </script>
 </body>
 </html>
