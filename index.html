@@ -102,6 +102,9 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a href="#cockcroft">Aclaramiento (Cockcroft)</a>
     <a href="#cha2ds2vasc">CHA₂DS₂-VASc</a>
     <a href="#wells-tep">Wells (TEP)</a>
+    <a href="#glasgow-blatchford">Glasgow-Blatchford</a>
+    <a href="#bisap">BISAP</a>
+    <a href="#child-pugh">Child-Pugh</a>
   </nav>
 
   <!-- ============ FLUIDOS ============ -->
@@ -299,7 +302,72 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a class="top" href="#">↑ Menú</a>
   </section>
 
-  <p class="foot">Guardia sin Pánico · Calculadoras v0.3 (borrador) · Última revisión: julio 2026</p>
+  <!-- ============ GLASGOW-BLATCHFORD ============ -->
+  <section class="card" id="glasgow-blatchford">
+    <h2>Glasgow-Blatchford · HDA</h2>
+    <p class="sub">Riesgo en la hemorragia digestiva alta. Un 0 permite valorar alta.</p>
+
+    <div class="row">
+      <div><label>Urea (mg/dL)</label><input type="number" id="gb-urea" inputmode="decimal" placeholder="40"/></div>
+      <div><label>Hemoglobina (g/dL)</label><input type="number" id="gb-hb" inputmode="decimal" step="0.1" placeholder="13"/></div>
+    </div>
+    <div class="row">
+      <div><label>TA sistólica (mmHg)</label><input type="number" id="gb-tas" inputmode="decimal" placeholder="120"/></div>
+      <div><label>Sexo</label><select id="gb-sexo"><option value="h">Hombre</option><option value="m">Mujer</option></select></div>
+    </div>
+    <div id="gb-list" style="margin-top:6px">
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Frecuencia cardíaca ≥ 100 lpm</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Melena</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="2"/> <span>Síncope</span><span class="pts">+2</span></label>
+      <label class="check"><input type="checkbox" data-p="2"/> <span>Hepatopatía</span><span class="pts">+2</span></label>
+      <label class="check"><input type="checkbox" data-p="2"/> <span>Insuficiencia cardíaca</span><span class="pts">+2</span></label>
+    </div>
+
+    <div class="out" id="gb-out"><div class="big">0 <small>puntos</small></div></div>
+    <p class="hint">Referencia: Blatchford. La urea se convierte a mmol/L (÷6). Puntuación 0 = riesgo muy bajo (candidato a manejo ambulatorio); a mayor puntuación, mayor necesidad de intervención.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <!-- ============ BISAP ============ -->
+  <section class="card" id="bisap">
+    <h2>BISAP · gravedad de pancreatitis</h2>
+    <p class="sub">Marca lo que cumpla en las primeras 24 h. 1 punto cada uno.</p>
+
+    <div id="bisap-list">
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Urea (BUN) &gt; 25 mg/dL</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Alteración del estado mental</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>SIRS (≥ 2 criterios)</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Edad &gt; 60 años</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Derrame pleural</span><span class="pts">+1</span></label>
+    </div>
+
+    <div class="out" id="bisap-out"><div class="big">0 <small>puntos</small></div></div>
+    <p class="hint">Referencia: BISAP. Puntuación ≥ 3 identifica mayor riesgo de mortalidad y de pancreatitis grave.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <!-- ============ CHILD-PUGH ============ -->
+  <section class="card" id="child-pugh">
+    <h2>Child-Pugh · reserva hepática</h2>
+    <p class="sub">Selecciona en cada fila. Estima el pronóstico de la cirrosis.</p>
+
+    <label>Bilirrubina (mg/dL)</label>
+    <select class="cp" id="cp-bili"><option value="1">&lt; 2</option><option value="2">2 – 3</option><option value="3">&gt; 3</option></select>
+    <label>Albúmina (g/dL)</label>
+    <select class="cp" id="cp-alb"><option value="1">&gt; 3,5</option><option value="2">2,8 – 3,5</option><option value="3">&lt; 2,8</option></select>
+    <label>INR</label>
+    <select class="cp" id="cp-inr"><option value="1">&lt; 1,7</option><option value="2">1,7 – 2,3</option><option value="3">&gt; 2,3</option></select>
+    <label>Ascitis</label>
+    <select class="cp" id="cp-asc"><option value="1">Ausente</option><option value="2">Leve (controlada)</option><option value="3">Moderada-grave</option></select>
+    <label>Encefalopatía</label>
+    <select class="cp" id="cp-enc"><option value="1">No</option><option value="2">Grado 1-2</option><option value="3">Grado 3-4</option></select>
+
+    <div class="out" id="cp-out"><div class="big">5 <small>puntos</small></div></div>
+    <p class="hint">Referencia: Child-Pugh. A: 5-6 (buena reserva) · B: 7-9 · C: 10-15 (mal pronóstico).</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <p class="foot">Guardia sin Pánico · Calculadoras v0.4 (borrador) · Última revisión: julio 2026</p>
 </div>
 
 <script>
@@ -523,8 +591,53 @@ function calcWells(){
 }
 $('wells-list').addEventListener('change', calcWells);
 
+/* ================= GLASGOW-BLATCHFORD ================= */
+function calcGb(){
+  var urea = num('gb-urea'), hb = num('gb-hb'), tas = num('gb-tas'); var out = $('gb-out');
+  if(urea === null || hb === null || tas === null){ out.className='out'; out.innerHTML = '<div class="big">— <small>puntos</small></div>'; return; }
+  var p = 0;
+  var u = urea / 6.0; // mg/dL -> mmol/L
+  if(u >= 25) p += 6; else if(u >= 10) p += 4; else if(u >= 8) p += 3; else if(u >= 6.5) p += 2;
+  if($('gb-sexo').value === 'h'){
+    if(hb < 10) p += 6; else if(hb < 12) p += 3; else if(hb < 13) p += 1;
+  } else {
+    if(hb < 10) p += 6; else if(hb < 12) p += 1;
+  }
+  if(tas < 90) p += 3; else if(tas < 100) p += 2; else if(tas < 110) p += 1;
+  p += sumChecks('gb-list');
+  var msg = (p === 0) ? 'Riesgo muy bajo: valorar manejo ambulatorio.' : 'Riesgo no bajo: valorar ingreso y endoscopia.';
+  out.className = (p >= 1) ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + p + ' <small>puntos</small></div><div class="line">' + msg + '</div>';
+}
+['gb-urea','gb-hb','gb-tas','gb-sexo'].forEach(function(id){ $(id).addEventListener('input', calcGb); });
+$('gb-list').addEventListener('change', calcGb);
+
+/* ================= BISAP ================= */
+function calcBisap(){
+  var p = sumChecks('bisap-list'); var out = $('bisap-out');
+  var msg = (p >= 3) ? 'Riesgo elevado (mayor mortalidad).' : 'Riesgo bajo-moderado.';
+  out.className = (p >= 3) ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + p + ' <small>puntos</small></div><div class="line">' + msg + '</div>';
+}
+$('bisap-list').addEventListener('change', calcBisap);
+
+/* ================= CHILD-PUGH ================= */
+function calcCp(){
+  var ids = ['cp-bili','cp-alb','cp-inr','cp-asc','cp-enc'];
+  var p = ids.reduce(function(s,id){ return s + parseInt($(id).value,10); }, 0);
+  var clase, msg;
+  if(p <= 6){ clase = 'A'; msg = 'Buena reserva hepática.'; }
+  else if(p <= 9){ clase = 'B'; msg = 'Reserva comprometida.'; }
+  else { clase = 'C'; msg = 'Mal pronóstico.'; }
+  var out = $('cp-out');
+  out.className = (p >= 10) ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + p + ' <small>puntos · clase ' + clase + '</small></div><div class="line">' + msg + '</div>';
+}
+[].forEach.call(document.querySelectorAll('select.cp'), function(s){ s.addEventListener('change', calcCp); });
+
 /* init */
 calcFlu(); calcGas(); calcSal(); calcAdr(); calcAc(); calcQtc(); calcCk(); calcCha(); calcWells();
+calcGb(); calcBisap(); calcCp();
 </script>
 </body>
 </html>
