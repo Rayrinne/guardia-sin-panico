@@ -110,6 +110,7 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a href="#sodio-corregido">Sodio corregido</a>
     <a href="#calcio-corregido">Calcio corregido</a>
     <a href="#osmolalidad">Osmolalidad</a>
+    <a href="#curb65">CURB-65</a>
   </nav>
 
   <!-- ============ FLUIDOS ============ -->
@@ -477,7 +478,25 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     <a class="top" href="#">↑ Menú</a>
   </section>
 
-  <p class="foot">Guardia sin Pánico · Calculadoras v0.6 (borrador) · Última revisión: julio 2026</p>
+  <!-- ============ CURB-65 ============ -->
+  <section class="card" id="curb65">
+    <h2>CURB-65 · gravedad de la neumonía</h2>
+    <p class="sub">Marca lo que cumpla. Orienta el ámbito de tratamiento.</p>
+
+    <div id="curb-list">
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Confusión (desorientación nueva)</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Urea &gt; 44 mg/dL (BUN &gt; 19)</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Frecuencia respiratoria ≥ 30 rpm</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>TA sistólica &lt; 90 o diastólica ≤ 60 mmHg</span><span class="pts">+1</span></label>
+      <label class="check"><input type="checkbox" data-p="1"/> <span>Edad ≥ 65 años</span><span class="pts">+1</span></label>
+    </div>
+
+    <div class="out" id="curb-out"><div class="big">0 <small>puntos</small></div></div>
+    <p class="hint">Referencia: CURB-65. 0-1 riesgo bajo (valorar ambulatorio) · 2 intermedio (observación/ingreso corto) · ≥ 3 grave (ingreso; valorar UCI). Complementa siempre con saturación y juicio clínico.</p>
+    <a class="top" href="#">↑ Menú</a>
+  </section>
+
+  <p class="foot">Guardia sin Pánico · Calculadoras v0.7 (borrador) · Última revisión: julio 2026</p>
 </div>
 
 <script>
@@ -811,9 +830,21 @@ function calcOsm(){
 }
 ['osm-na','osm-glu','osm-urea'].forEach(function(id){ $(id).addEventListener('input', calcOsm); });
 
+/* ================= CURB-65 ================= */
+function calcCurb(){
+  var p = sumChecks('curb-list'); var out = $('curb-out');
+  var msg;
+  if(p <= 1) msg = 'Riesgo bajo: valorar tratamiento ambulatorio.';
+  else if(p === 2) msg = 'Riesgo intermedio: observación o ingreso corto.';
+  else msg = 'Riesgo alto: ingreso; valorar UCI.';
+  out.className = (p >= 3) ? 'out warn' : 'out';
+  out.innerHTML = '<div class="big">' + p + ' <small>puntos</small></div><div class="line">' + msg + '</div>';
+}
+$('curb-list').addEventListener('change', calcCurb);
+
 /* init */
 calcFlu(); calcGas(); calcSal(); calcAdr(); calcAc(); calcQtc(); calcCk(); calcCha(); calcWells();
-calcGb(); calcBisap(); calcCp(); calcGcs(); calcNi(); calcSnc(); calcCac(); calcOsm();
+calcGb(); calcBisap(); calcCp(); calcGcs(); calcNi(); calcSnc(); calcCac(); calcOsm(); calcCurb();
 </script>
 </body>
 </html>
