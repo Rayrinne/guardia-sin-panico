@@ -443,7 +443,7 @@ a.top{display:block; text-align:center; font-family:system-ui,-apple-system,sans
     </div>
 
     <div class="out" id="snc-out"><div class="big">— <small>mmol/L</small></div></div>
-    <p class="hint">Corrección: Na + 1,6 × [(glucosa − 100) / 100]. Algunos usan factor 2,4 con glucemias muy altas (&gt; 400).</p>
+    <p class="hint">Corrección: Na + factor × [(glucosa − 100) / 100]. Factor 1,6 de forma general; se usa 2,4 con glucemias muy altas (&gt; 400 mg/dL). La calculadora aplica el factor automáticamente según la glucemia introducida.</p>
     <a class="top" href="#">↑ Menú</a>
   </section>
 
@@ -818,10 +818,11 @@ function calcNi(){
 function calcSnc(){
   var na = num('snc-na'), glu = num('snc-glu'); var out = $('snc-out');
   if(na === null || glu === null){ out.className='out'; out.innerHTML = '<div class="big">— <small>mmol/L</small></div>'; return; }
-  var corr = na + 1.6 * ((glu - 100) / 100);
+  var factor = glu > 400 ? 2.4 : 1.6;
+  var corr = na + factor * ((glu - 100) / 100);
   out.className = 'out';
   out.innerHTML = '<div class="big">' + corr.toFixed(1) + ' <small>mmol/L</small></div>' +
-    '<div class="line">Sodio medido ' + na.toFixed(0) + ' → corregido ' + corr.toFixed(1) + ' por glucemia de ' + glu.toFixed(0) + ' mg/dL.</div>';
+    '<div class="line">Sodio medido ' + na.toFixed(0) + ' → corregido ' + corr.toFixed(1) + ' por glucemia de ' + glu.toFixed(0) + ' mg/dL (factor ' + factor.toString().replace('.', ',') + ', glucemia ' + (glu > 400 ? '&gt; 400' : '≤ 400') + ' mg/dL).</div>';
 }
 ['snc-na','snc-glu'].forEach(function(id){ $(id).addEventListener('input', calcSnc); });
 
